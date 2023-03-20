@@ -1,5 +1,4 @@
 import mimetypes
-import pathlib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import urllib.parse
 import socket
@@ -24,7 +23,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         elif pr_url.path == '/message':
             self.send_html_file('message.html')
         else:
-            if pathlib.Path().joinpath(pr_url.path[1:]).exists():
+            if Path().joinpath(pr_url.path[1:]).exists():
                 self.send_static()
             else:
                 self.send_html_file('error.html', 404)
@@ -84,6 +83,7 @@ def run_socket_server(ip=SOCKET_IP, port=SOCKET_PORT):
 def save_data_to_json(data):
     data_parse = urllib.parse.unquote_plus(data.decode())
     data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
+
     try:
         with open(FILE_STORAGE, 'r') as file:
             storage = json.load(file)
