@@ -15,6 +15,7 @@ SOCKET_PORT = 5000
 STORAGE_DIR = Path().joinpath('storage')
 FILE_STORAGE = STORAGE_DIR / 'data.json'
 
+
 class HttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         pr_url = urllib.parse.urlparse(self.path)
@@ -34,8 +35,6 @@ class HttpHandler(BaseHTTPRequestHandler):
         self.send_response(302)
         self.send_header('Location', '/')
         self.end_headers()
-
-
 
     def send_static(self):
         self.send_response(200)
@@ -62,7 +61,6 @@ def send_data_to_socket(data):
     sock.close()
 
 
-
 def run(server_class=HTTPServer, handler_class=HttpHandler):
     server_address = (HTTP_IP, HTTP_PORT)
     http = server_class(server_address, handler_class)
@@ -71,8 +69,9 @@ def run(server_class=HTTPServer, handler_class=HttpHandler):
     except KeyboardInterrupt:
         http.server_close()
 
-def run_socket_server(ip = SOCKET_IP, port = SOCKET_PORT):
-    sock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def run_socket_server(ip=SOCKET_IP, port=SOCKET_PORT):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((ip, port))
     try:
         while True:
@@ -81,27 +80,26 @@ def run_socket_server(ip = SOCKET_IP, port = SOCKET_PORT):
     except KeyboardInterrupt:
         sock.close()
 
+
 def save_data_to_json(data):
     data_parse = urllib.parse.unquote_plus(data.decode())
     data_dict = {key: value for key, value in [el.split('=') for el in data_parse.split('&')]}
     try:
-        with open( FILE_STORAGE, 'r') as file:
+        with open(FILE_STORAGE, 'r') as file:
             storage = json.load(file)
     except ValueError:
         storage = {}
-    storage.update({str(datetime.now()) : data_dict})
+    storage.update({str(datetime.now()): data_dict})
     with open(FILE_STORAGE, 'w') as file:
         json.dump(storage, file)
 
 
-
-
-
 def main():
-    http_server = Thread(target= run)
-    socket_server = Thread(target= run_socket_server)
+    http_server = Thread(target=run)
+    socket_server = Thread(target=run_socket_server)
     http_server.start()
     socket_server.start()
+
 
 if __name__ == '__main__':
     exit(main())
