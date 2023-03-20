@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 from threading import Thread
 
-HTTP_IP = '127.0.0.1'
+HTTP_IP = '0.0.0.0'
 HTTP_PORT = 3000
 SOCKET_IP = '127.0.0.1'
 SOCKET_PORT = 5000
